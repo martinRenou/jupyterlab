@@ -600,7 +600,7 @@ export class FileBrowserModel implements IDisposable {
     sender: Session.IManager,
     models: IterableOrArrayLike<Session.IModel>
   ): void {
-    this._populateSessions(models);
+    this.populateSessions(models);
     this._refreshed.emit(void 0);
   }
 
@@ -624,7 +624,7 @@ export class FileBrowserModel implements IDisposable {
     // If either the old value or the new value is in the current path, update.
     if (value) {
       void this._poll.refresh();
-      this._populateSessions(sessions.running());
+      this.populateSessions(sessions.running());
       this._fileChanged.emit(change);
       return;
     }
@@ -633,7 +633,7 @@ export class FileBrowserModel implements IDisposable {
   /**
    * Populate the model's sessions collection.
    */
-  private _populateSessions(models: IterableOrArrayLike<Session.IModel>): void {
+  protected populateSessions(models: IterableOrArrayLike<Session.IModel>): void {
     this._sessions.length = 0;
     each(models, model => {
       if (this._paths.has(model.path)) {
