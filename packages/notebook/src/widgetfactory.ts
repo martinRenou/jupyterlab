@@ -9,6 +9,7 @@ import { IEditorMimeTypeService } from '@jupyterlab/codeeditor';
 import { ABCWidgetFactory, DocumentRegistry } from '@jupyterlab/docregistry';
 import { IRenderMimeRegistry } from '@jupyterlab/rendermime';
 import { ITranslator } from '@jupyterlab/translation';
+import { IUser } from '@jupyterlab/user';
 import { ToolbarItems } from './default-toolbar';
 import { INotebookModel } from './model';
 import { NotebookPanel } from './panel';
@@ -37,6 +38,7 @@ export class NotebookWidgetFactory extends ABCWidgetFactory<
     this._notebookConfig =
       options.notebookConfig || StaticNotebook.defaultNotebookConfig;
     this._sessionDialogs = options.sessionDialogs || sessionContextDialogs;
+    this._currentUser = options.currentUser;
   }
 
   /*
@@ -95,7 +97,8 @@ export class NotebookWidgetFactory extends ABCWidgetFactory<
       notebookConfig: source
         ? source.content.notebookConfig
         : this._notebookConfig,
-      translator
+      translator,
+      currentUser: this._currentUser,
     };
     const content = this.contentFactory.createNotebook(nbOptions);
 
@@ -118,6 +121,7 @@ export class NotebookWidgetFactory extends ABCWidgetFactory<
   private _editorConfig: StaticNotebook.IEditorConfig;
   private _notebookConfig: StaticNotebook.INotebookConfig;
   private _sessionDialogs: ISessionContextDialogs;
+  private _currentUser: IUser | undefined;
 }
 
 /**
@@ -163,6 +167,11 @@ export namespace NotebookWidgetFactory {
      * The application language translator.
      */
     translator?: ITranslator;
+
+    /**
+     * The current user.
+     */
+    currentUser?: IUser;
   }
 
   /**

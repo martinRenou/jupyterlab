@@ -235,6 +235,20 @@ export class YNotebook
   }
 
   /**
+   * Send an update of the current mode to other collaborators.
+   */
+  notifyMode(oldValue: 'command' | 'edit', newValue: 'command' | 'edit') {
+    this.awareness.setLocalStateField('mode', { oldValue, newValue });
+  }
+
+  /**
+   * Send an update of the active cell index to other collaborators.
+   */
+  notifyActiveCellIndex(oldValue: number, newValue: number) {
+    this.awareness.setLocalStateField('activeCellIndex', { oldValue, newValue });
+  }
+
+  /**
    * Dispose of the resources.
    */
   dispose(): void {

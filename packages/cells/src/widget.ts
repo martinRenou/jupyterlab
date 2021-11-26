@@ -214,8 +214,8 @@ export class Cell<T extends ICellModel = ICellModel> extends Widget {
     // Input
     const inputWrapper = (this._inputWrapper = new Panel());
     inputWrapper.addClass(CELL_INPUT_WRAPPER_CLASS);
-    const inputCollapser = new InputCollapser();
-    inputCollapser.addClass(CELL_INPUT_COLLAPSER_CLASS);
+    this._inputCollapser = new InputCollapser();
+    this._inputCollapser.addClass(CELL_INPUT_COLLAPSER_CLASS);
     const input = (this._input = new InputArea({
       model,
       contentFactory,
@@ -223,7 +223,7 @@ export class Cell<T extends ICellModel = ICellModel> extends Widget {
       placeholder: options.placeholder
     }));
     input.addClass(CELL_INPUT_AREA_CLASS);
-    inputWrapper.addWidget(inputCollapser);
+    inputWrapper.addWidget(this._inputCollapser);
     inputWrapper.addWidget(input);
     (this.layout as PanelLayout).addWidget(inputWrapper);
 
@@ -437,6 +437,10 @@ export class Cell<T extends ICellModel = ICellModel> extends Widget {
     return;
   }
 
+  get inputCollapser(): InputCollapser {
+    return this._inputCollapser;
+  }
+
   /**
    * Whether to sync the collapse state to the cell model.
    */
@@ -558,6 +562,7 @@ export class Cell<T extends ICellModel = ICellModel> extends Widget {
 
   // Used in clone() to instantiate a new instance of the current widget
   protected translator: ITranslator;
+  private _inputCollapser: InputCollapser;
   private _readOnly = false;
   private _model: T;
   private _inputHidden = false;

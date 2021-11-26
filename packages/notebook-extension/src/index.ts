@@ -78,6 +78,7 @@ import {
   notebookIcon,
   pasteIcon
 } from '@jupyterlab/ui-components';
+import { ICurrentUser, IUser } from '@jupyterlab/user';
 import { ArrayExt } from '@lumino/algorithm';
 import { CommandRegistry } from '@lumino/commands';
 import {
@@ -625,7 +626,8 @@ const widgetFactoryPlugin: JupyterFrontEndPlugin<NotebookWidgetFactory.IFactory>
     IRenderMimeRegistry,
     ISessionContextDialogs,
     IToolbarWidgetRegistry,
-    ITranslator
+    ITranslator,
+    ICurrentUser
   ],
   optional: [ISettingRegistry],
   activate: activateWidgetFactory,
@@ -810,7 +812,8 @@ function activateWidgetFactory(
   sessionContextDialogs: ISessionContextDialogs,
   toolbarRegistry: IToolbarWidgetRegistry,
   translator: ITranslator,
-  settingRegistry: ISettingRegistry | null
+  currentUser: IUser,
+  settingRegistry: ISettingRegistry | null,
 ): NotebookWidgetFactory.IFactory {
   const { commands } = app;
   let toolbarFactory:
@@ -872,8 +875,10 @@ function activateWidgetFactory(
     mimeTypeService: editorServices.mimeTypeService,
     sessionDialogs: sessionContextDialogs,
     toolbarFactory,
-    translator: translator
+    translator: translator,
+    currentUser: currentUser
   });
+  console.log('activateWidgetFactory')
   app.docRegistry.addWidgetFactory(factory);
   return factory;
 }

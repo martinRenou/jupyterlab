@@ -16,6 +16,7 @@ import { IChangedArgs } from '@jupyterlab/coreutils';
 import * as nbformat from '@jupyterlab/nbformat';
 import { IObservableList, IObservableMap } from '@jupyterlab/observables';
 import { IRenderMimeRegistry } from '@jupyterlab/rendermime';
+import { YNotebook } from '@jupyterlab/shared-models';
 import { ITranslator, nullTranslator } from '@jupyterlab/translation';
 import { ArrayExt, each, findIndex } from '@lumino/algorithm';
 import { MimeData, ReadonlyPartialJSONValue } from '@lumino/coreutils';
@@ -25,6 +26,7 @@ import { Message } from '@lumino/messaging';
 import { AttachedProperty } from '@lumino/properties';
 import { ISignal, Signal } from '@lumino/signaling';
 import { h, VirtualDOM } from '@lumino/virtualdom';
+import { IUser } from '@jupyterlab/user';
 import { PanelLayout, Widget } from '@lumino/widgets';
 import { NotebookActions } from './actions';
 import { INotebookModel } from './model';
@@ -856,6 +858,11 @@ export namespace StaticNotebook {
      * The application language translator.
      */
     translator?: ITranslator;
+
+    /**
+     * The current user.
+     */
+    currentUser?: IUser;
   }
 
   /**
@@ -1146,6 +1153,10 @@ export class Notebook extends StaticNotebook {
       // Focus on the notebook document, which blurs the active cell.
       this.node.focus();
     }
+
+    // Notify the collaborators
+    (this.model?.sharedModel as YNotebook).notifyMode(oldValue, newValue);
+
     this._stateChanged.emit({ name: 'mode', oldValue, newValue });
     this._ensureFocus();
   }
@@ -1187,6 +1198,10 @@ export class Notebook extends StaticNotebook {
       return;
     }
     this._trimSelections();
+
+    // Notify the collaborators
+    (this.model?.sharedModel as YNotebook).notifyActiveCellIndex(oldValue, newValue);
+
     this._stateChanged.emit({ name: 'activeCellIndex', oldValue, newValue });
   }
 
@@ -1756,6 +1771,29 @@ export class Notebook extends StaticNotebook {
     // Try to set the active cell index to 0.
     // It will be set to `-1` if there is no new model or the model is empty.
     this.activeCellIndex = 0;
+
+    if (oldValue) {
+      (oldValue.sharedModel as YNotebook).awareness.off('change', this._onAwarenessChanged);
+    }
+    (this.model?.sharedModel as YNotebook).awareness.on('change', this._onAwarenessChanged);
+  }
+
+  /**
+   * Handle collaborator change.
+   */
+  private _onAwarenessChanged = () => {
+    const state = (this.model?.sharedModel as YNotebook).awareness.getStates();
+
+    state.forEach((value: any, key: any) => {
+      const user = value.user;
+
+      if (user && value.activeCellIndex !== undefined && value.activeCellIndex.newValue !== -1) {
+        this.widgets[value.activeCellIndex.newValue].inputCollapser.node.style.background = user.color;
+      }
+      if (user && value.activeCellIndex !== undefined && value.activeCellIndex.oldValue !== -1) {
+        this.widgets[value.activeCellIndex.oldValue].inputCollapser.node.style.background = 'transparent';
+      }
+    });
   }
 
   /**
