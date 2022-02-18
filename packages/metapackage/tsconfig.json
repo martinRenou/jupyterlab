@@ -40,6 +40,12 @@
       "path": "../codemirror-extension"
     },
     {
+      "path": "../collaboration"
+    },
+    {
+      "path": "../collaboration-extension"
+    },
+    {
       "path": "../completer"
     },
     {
@@ -266,12 +272,6 @@
     },
     {
       "path": "../ui-components-extension"
-    },
-    {
-      "path": "../user"
-    },
-    {
-      "path": "../user-extension"
     },
     {
       "path": "../vdom"

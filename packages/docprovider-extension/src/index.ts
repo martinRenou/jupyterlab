@@ -16,7 +16,7 @@ import {
   ProviderMock,
   WebSocketProviderWithLocks
 } from '@jupyterlab/docprovider';
-import { ICurrentUser } from '@jupyterlab/user';
+import { ICurrentUser } from '@jupyterlab/collaboration';
 import { ServerConnection } from '@jupyterlab/services';
 
 /**
