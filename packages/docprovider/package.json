@@ -40,7 +40,7 @@
   },
   "dependencies": {
     "@jupyterlab/shared-models": "^4.0.0-alpha.11",
-    "@jupyterlab/user": "^4.0.0-alpha.11",
+    "@jupyterlab/collaboration": "^4.0.0-alpha.11",
     "@lumino/coreutils": "^1.12.0",
     "lib0": "^0.2.42",
     "y-websocket": "^1.3.15"
