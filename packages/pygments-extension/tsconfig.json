@@ -4,6 +4,12 @@
     "outDir": "lib",
     "rootDir": "src"
   },
-  "include": ["src/*"],
-  "references": []
+  "include": [
+    "src/*"
+  ],
+  "references": [
+    {
+      "path": "../application"
+    }
+  ]
 }

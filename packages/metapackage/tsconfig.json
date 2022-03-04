@@ -4,7 +4,9 @@
     "outDir": "lib",
     "rootDir": "src"
   },
-  "include": ["src/*"],
+  "include": [
+    "src/*"
+  ],
   "references": [
     {
       "path": "../application"
@@ -185,6 +187,9 @@
     },
     {
       "path": "../property-inspector"
+    },
+    {
+      "path": "../pygments-extension"
     },
     {
       "path": "../rendermime"
