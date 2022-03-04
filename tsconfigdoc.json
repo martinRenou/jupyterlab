@@ -197,6 +197,9 @@
       "path": "./packages/property-inspector"
     },
     {
+      "path": "./packages/pygments-extension"
+    },
+    {
       "path": "./packages/rendermime"
     },
     {
