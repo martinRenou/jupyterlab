@@ -114,14 +114,9 @@ const rtcGlobalAwarenessPlugin: JupyterFrontEndPlugin<Awareness | null> = {
     const server = ServerConnection.makeSettings();
     const url = URLExt.join(server.wsUrl, 'api/yjs');
 
-    new WebsocketProvider(
-      url,
-      'JupyterLab:globalAwareness',
-      ydoc,
-      {
-        awareness: awareness
-      }
-    );
+    new WebsocketProvider(url, 'JupyterLab:globalAwareness', ydoc, {
+      awareness: awareness
+    });
 
     const userChanged = () => {
       const name =
@@ -140,10 +135,7 @@ const rtcGlobalAwarenessPlugin: JupyterFrontEndPlugin<Awareness | null> = {
       const data: any = await state.toJSON();
       const current = data['layout-restorer:data']?.main?.current;
 
-      if (
-        current.startsWith('editor') ||
-        current.startsWith('notebook')
-      ) {
+      if (current.startsWith('editor') || current.startsWith('notebook')) {
         awareness.setLocalStateField('current', current);
       } else {
         awareness.setLocalStateField('current', null);
