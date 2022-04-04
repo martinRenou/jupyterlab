@@ -13,8 +13,7 @@ import { IFilter, IFilters, ISearchProvider } from './tokens';
  */
 export class SearchDocumentModel
   extends VDomModel
-  implements IObservableDisposable
-{
+  implements IObservableDisposable {
   /**
    * Search document model
    * @param searchProvider Provider for the current document

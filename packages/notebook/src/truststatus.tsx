@@ -100,7 +100,9 @@ namespace NotebookTrustComponent {
 /**
  * The NotebookTrust status item.
  */
-export class NotebookTrustStatus extends VDomRenderer<NotebookTrustStatus.Model> {
+export class NotebookTrustStatus extends VDomRenderer<
+  NotebookTrustStatus.Model
+> {
   /**
    * Construct a new status item.
    */
@@ -238,7 +240,9 @@ export namespace NotebookTrustStatus {
     /**
      * Given a notebook model, figure out how many of the cells are trusted.
      */
-    private _deriveCellTrustState(model: INotebookModel | null): {
+    private _deriveCellTrustState(
+      model: INotebookModel | null
+    ): {
       total: number;
       trusted: number;
     } {

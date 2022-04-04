@@ -120,8 +120,7 @@ export namespace FileDialog {
  */
 class OpenDialog
   extends Widget
-  implements Dialog.IBodyWidget<Contents.IModel[]>
-{
+  implements Dialog.IBodyWidget<Contents.IModel[]> {
   constructor(
     manager: IDocumentManager,
     filter?: (value: Contents.IModel) => Partial<IScore> | null,

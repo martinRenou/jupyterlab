@@ -44,9 +44,14 @@ export const IUserPanel = new Token<AccordionPanel>(
 /**
  * The global awareness token.
  */
-export const IGlobalAwareness = new Token<Awareness>(
+export const IGlobalAwareness = new Token<IAwareness>(
   '@jupyterlab/collaboration:IGlobalAwareness'
 );
+
+/**
+ * The awareness interface.
+ */
+export interface IAwareness extends Awareness {}
 
 /**
  * @experimental

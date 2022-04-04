@@ -9,8 +9,7 @@ import { IFilter, IFilters, ISearchMatch, ISearchProvider } from './tokens';
  * Abstract class implementing the search provider interface.
  */
 export abstract class SearchProvider<T extends Widget = Widget>
-  implements ISearchProvider
-{
+  implements ISearchProvider {
   /**
    * Constructor
    *

@@ -16,7 +16,9 @@ import {
 import { PageConfig } from '@jupyterlab/coreutils';
 import { DOMUtils } from '@jupyterlab/apputils';
 import {
+  AwarenessMock,
   CollaboratorsPanel,
+  IAwareness,
   ICurrentUser,
   IGlobalAwareness,
   IUserMenu,
@@ -94,7 +96,7 @@ const menuBarPlugin: JupyterFrontEndPlugin<void> = {
 /**
  * Jupyter plugin creating a global awareness for RTC.
  */
-const rtcGlobalAwarenessPlugin: JupyterFrontEndPlugin<Awareness | null> = {
+const rtcGlobalAwarenessPlugin: JupyterFrontEndPlugin<IAwareness> = {
   id: '@jupyterlab/collaboration-extension:rtcGlobalAwareness',
   autoStart: true,
   requires: [ICurrentUser, IStateDB],
@@ -103,12 +105,13 @@ const rtcGlobalAwarenessPlugin: JupyterFrontEndPlugin<Awareness | null> = {
     app: JupyterFrontEnd,
     currentUser: User,
     state: StateDB
-  ): Awareness | null => {
+  ): IAwareness => {
+    const ydoc = new Y.Doc();
+
     if (PageConfig.getOption('collaborative') !== 'true') {
-      return null;
+      return new AwarenessMock(ydoc);
     }
 
-    const ydoc = new Y.Doc();
     const awareness = new Awareness(ydoc);
 
     const server = ServerConnection.makeSettings();

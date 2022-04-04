@@ -100,8 +100,10 @@ export class ToolbarWidgetRegistry implements IToolbarWidgetRegistry {
     widget: Widget,
     toolbarItem: ToolbarRegistry.IWidget
   ) => Widget;
-  protected _widgets: Map<string, Map<string, (main: Widget) => Widget>> =
-    new Map<string, Map<string, (main: Widget) => Widget>>();
+  protected _widgets: Map<
+    string,
+    Map<string, (main: Widget) => Widget>
+  > = new Map<string, Map<string, (main: Widget) => Widget>>();
 }
 
 /**

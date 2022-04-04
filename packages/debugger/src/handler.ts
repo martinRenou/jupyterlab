@@ -187,8 +187,9 @@ export class DebuggerHandler implements DebuggerHandler.IHandler {
       void this.update(widget, connection);
     };
 
-    const contextKernelChangedHandlers =
-      this._contextKernelChangedHandlers[widget.id];
+    const contextKernelChangedHandlers = this._contextKernelChangedHandlers[
+      widget.id
+    ];
 
     if (contextKernelChangedHandlers) {
       sessionContext.kernelChanged.disconnect(contextKernelChangedHandlers);

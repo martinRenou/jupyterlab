@@ -656,8 +656,7 @@ function ensureLockfile(): string[] {
   const messages = [];
 
   // Verify that all packages have resolved to the correct (default) registry
-  const resolvedPattern =
-    /^\s*resolved "((?!https:\/\/registry\.yarnpkg\.com\/).*)"\s*$/gm;
+  const resolvedPattern = /^\s*resolved "((?!https:\/\/registry\.yarnpkg\.com\/).*)"\s*$/gm;
   let badRegistry;
   while ((badRegistry = resolvedPattern.exec(content)) !== null) {
     messages.push(`Fixing bad npm/yarn registry: ${badRegistry[1]}`);

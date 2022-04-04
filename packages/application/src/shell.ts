@@ -325,16 +325,14 @@ export class LabShell extends Widget implements JupyterFrontEnd.IShell {
     const bottomPanel = (this._bottomPanel = new BoxPanel());
     bottomPanel.node.setAttribute('role', 'contentinfo');
     const hboxPanel = new BoxPanel();
-    const vsplitPanel = (this._vsplitPanel =
-      new Private.RestorableSplitPanel());
+    const vsplitPanel = (this._vsplitPanel = new Private.RestorableSplitPanel());
     const dockPanel = (this._dockPanel = new DockPanelSvg({
       hiddenMode: Widget.HiddenMode.Scale,
       translator: options?.translator
     }));
     MessageLoop.installMessageHook(dockPanel, this._dockChildHook);
 
-    const hsplitPanel = (this._hsplitPanel =
-      new Private.RestorableSplitPanel());
+    const hsplitPanel = (this._hsplitPanel = new Private.RestorableSplitPanel());
     const downPanel = (this._downPanel = new TabPanelSvg({
       tabsMovable: true
     }));
@@ -1049,8 +1047,14 @@ export class LabShell extends Widget implements JupyterFrontEnd.IShell {
 
     // Reset the layout
 
-    const { mainArea, downArea, leftArea, rightArea, topArea, relativeSizes } =
-      layout;
+    const {
+      mainArea,
+      downArea,
+      leftArea,
+      rightArea,
+      topArea,
+      relativeSizes
+    } = layout;
     // Rehydrate the main area.
     if (mainArea) {
       const { currentWidget, dock } = mainArea;

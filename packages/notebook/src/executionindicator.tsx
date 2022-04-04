@@ -551,7 +551,9 @@ export namespace ExecutionIndicator {
     return toolbarItem;
   }
 
-  export function getSettingValue(settings: ISettingRegistry.ISettings): {
+  export function getSettingValue(
+    settings: ISettingRegistry.ISettings
+  ): {
     showOnToolBar: boolean;
     showProgress: boolean;
   } {

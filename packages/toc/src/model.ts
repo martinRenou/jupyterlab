@@ -15,8 +15,7 @@ export abstract class TableOfContentsModel<
     T extends Widget = Widget
   >
   extends VDomModel
-  implements TableOfContents.IModel<H>
-{
+  implements TableOfContents.IModel<H> {
   /**
    * Constructor
    *
