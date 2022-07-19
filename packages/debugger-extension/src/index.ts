@@ -155,7 +155,7 @@ const files: JupyterFrontEndPlugin<void> = {
       editorTracker.currentChanged.connect((_, documentWidget) => {
         if (documentWidget) {
           void updateHandlerAndCommands(
-            (documentWidget as unknown) as DocumentWidget
+            documentWidget as unknown as DocumentWidget
           );
         }
       });

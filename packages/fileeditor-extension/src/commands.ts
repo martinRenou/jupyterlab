@@ -264,7 +264,7 @@ export namespace Commands {
         const currentSize = config.fontSize || cssSize;
         config.fontSize = currentSize + delta;
         return settingRegistry
-          .set(id, 'editorConfig', (config as unknown) as JSONObject)
+          .set(id, 'editorConfig', config as unknown as JSONObject)
           .catch((reason: Error) => {
             console.error(`Failed to set ${id}: ${reason.message}`);
           });
@@ -289,7 +289,7 @@ export namespace Commands {
       execute: () => {
         config.lineNumbers = !config.lineNumbers;
         return settingRegistry
-          .set(id, 'editorConfig', (config as unknown) as JSONObject)
+          .set(id, 'editorConfig', config as unknown as JSONObject)
           .catch((reason: Error) => {
             console.error(`Failed to set ${id}: ${reason.message}`);
           });
@@ -323,7 +323,7 @@ export namespace Commands {
       execute: args => {
         config.lineWrap = (args['mode'] as wrappingMode) || 'off';
         return settingRegistry
-          .set(id, 'editorConfig', (config as unknown) as JSONObject)
+          .set(id, 'editorConfig', config as unknown as JSONObject)
           .catch((reason: Error) => {
             console.error(`Failed to set ${id}: ${reason.message}`);
           });
@@ -374,7 +374,7 @@ export namespace Commands {
         config.tabSize = (args['size'] as number) || 4;
         config.insertSpaces = !!args['insertSpaces'];
         return settingRegistry
-          .set(id, 'editorConfig', (config as unknown) as JSONObject)
+          .set(id, 'editorConfig', config as unknown as JSONObject)
           .catch((reason: Error) => {
             console.error(`Failed to set ${id}: ${reason.message}`);
           });
@@ -393,7 +393,7 @@ export namespace Commands {
       execute: () => {
         config.matchBrackets = !config.matchBrackets;
         return settingRegistry
-          .set(id, 'editorConfig', (config as unknown) as JSONObject)
+          .set(id, 'editorConfig', config as unknown as JSONObject)
           .catch((reason: Error) => {
             console.error(`Failed to set ${id}: ${reason.message}`);
           });
@@ -429,7 +429,7 @@ export namespace Commands {
           args['force'] ?? !config.autoClosingBrackets
         );
         return settingRegistry
-          .set(id, 'editorConfig', (config as unknown) as JSONObject)
+          .set(id, 'editorConfig', config as unknown as JSONObject)
           .catch((reason: Error) => {
             console.error(`Failed to set ${id}: ${reason.message}`);
           });
