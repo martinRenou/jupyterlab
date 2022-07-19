@@ -136,7 +136,6 @@
     "@jupyterlab/translation": "^4.0.0-alpha.11",
     "@jupyterlab/translation-extension": "^4.0.0-alpha.11",
     "@jupyterlab/ui-components-extension": "^4.0.0-alpha.11",
-    "@jupyterlab/user-extension": "^4.0.0-alpha.11",
     "@jupyterlab/vdom-extension": "^4.0.0-alpha.11",
     "@jupyterlab/vega5-extension": "^4.0.0-alpha.11"
   },
@@ -248,7 +247,6 @@
       "@jupyterlab/tooltip-extension",
       "@jupyterlab/translation-extension",
       "@jupyterlab/ui-components-extension",
-      "@jupyterlab/user-extension",
       "@jupyterlab/vdom-extension",
       "@jupyterlab/vega5-extension"
     ]
