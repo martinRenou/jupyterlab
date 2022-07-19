@@ -13,9 +13,13 @@ export class AwarenessMock implements IAwareness {
     this.clientID = doc.clientID;
   }
 
-  setLocalState(state: any) {}
+  setLocalState(state: any) {
+    return;
+  }
 
-  setLocalStateField(field: string, value: any) {}
+  setLocalStateField(field: string, value: any) {
+    return;
+  }
 
   getLocalState(): any {
     return null;
@@ -25,11 +29,21 @@ export class AwarenessMock implements IAwareness {
     return this.states;
   }
 
-  on(name: string, f: any) {}
-  off(name: string, f: any) {}
-  once(name: string, f: any) {}
-  emit(name: string, args: any) {}
-  destroy() {}
+  on(name: string, f: any) {
+    return;
+  }
+  off(name: string, f: any) {
+    return;
+  }
+  once(name: string, f: any) {
+    return;
+  }
+  emit(name: string, args: any) {
+    return;
+  }
+  destroy() {
+    return;
+  }
 
   doc: Y.Doc;
   clientID: number;
