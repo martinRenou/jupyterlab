@@ -290,9 +290,6 @@
       "path": "./packages/ui-components-extension"
     },
     {
-      "path": "./packages/user-extension"
-    },
-    {
       "path": "./packages/vdom"
     },
     {
