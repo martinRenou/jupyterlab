@@ -120,8 +120,7 @@ const rtcGlobalAwarenessPlugin: JupyterFrontEndPlugin<IAwareness> = {
     const server = ServerConnection.makeSettings();
     const url = URLExt.join(server.wsUrl, 'api/yjs');
 
-    //new WebsocketProvider(url, 'JupyterLab:globalAwareness', ydoc, {
-    new WebsocketProvider(url, 'foo:bar:globalAwareness', ydoc, {
+    new WebsocketProvider(url, 'JupyterLab:globalAwareness', ydoc, {
       awareness: awareness
     });
 
