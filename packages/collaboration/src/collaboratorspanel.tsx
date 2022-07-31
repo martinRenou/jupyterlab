@@ -5,7 +5,7 @@ import * as React from 'react';
 
 import { Awareness } from 'y-protocols/awareness';
 
-import { Panel } from '@lumino/widgets';
+import { DockPanel, Panel } from '@lumino/widgets';
 
 import { ReactWidget } from '@jupyterlab/apputils';
 
@@ -41,7 +41,8 @@ export class CollaboratorsPanel extends Panel {
   constructor(
     currentUser: ICurrentUser,
     awareness: Awareness,
-    fileopener: (path: string) => void
+    fileopener: (path: string) => void,
+    layoutRestorer: (layout: JSON, dockPanelMode: DockPanel.Mode) => void
   ) {
     super({});
 
@@ -51,7 +52,7 @@ export class CollaboratorsPanel extends Panel {
 
     this._currentUser = currentUser;
 
-    this._body = new CollaboratorsBody(fileopener);
+    this._body = new CollaboratorsBody(fileopener, layoutRestorer);
     this.addWidget(this._body);
     this.update();
 
@@ -68,6 +69,9 @@ export class CollaboratorsPanel extends Panel {
     state.forEach((value: ICollaboratorAwareness, key: any) => {
       if (value.user.name !== this._currentUser.name) {
         collaborators.push(value);
+        console.info("collaborator: ", value);
+      } else {
+        console.info("collaborator (self): ", value); 
       }
     });
 
@@ -81,10 +85,14 @@ export class CollaboratorsPanel extends Panel {
 export class CollaboratorsBody extends ReactWidget {
   private _collaborators: ICollaboratorAwareness[] = [];
   private _fileopener: (path: string) => void;
+  private _layoutRestorer: (layout: JSON, dockPanelMode: DockPanel.Mode) => void;
 
-  constructor(fileopener: (path: string) => void) {
+  constructor(
+    fileopener: (path: string) => void, 
+    layoutRestorer: (layout: JSON, dockPanelMode: DockPanel.Mode) => void) {
     super();
     this._fileopener = fileopener;
+    this._layoutRestorer = layoutRestorer;
     this.addClass(COLLABORATORS_LIST_CLASS);
   }
 
@@ -114,9 +122,17 @@ export class CollaboratorsBody extends ReactWidget {
         separator = '•';
       }
 
+      let canSetLayout = false;
+      if (value.layout && value.dockPanelMode) {
+        canSetLayout = true;
+      }
+
       const onClick = () => {
         if (canOpenCurrent) {
           this._fileopener(currentFileLocation);
+        }
+        if (canSetLayout) {
+          this._layoutRestorer(value.layout, value.dockPanelMode);
         }
       };
 

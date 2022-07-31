@@ -402,6 +402,7 @@ const state: JupyterFrontEndPlugin<IStateDB> = {
       const id = workspace;
       const metadata = { id };
       const data = await db.toJSON();
+      console.info("apputils: saving state", id, data, metadata);
       await workspaces.save(id, { data, metadata });
     });
 
@@ -412,6 +413,9 @@ const state: JupyterFrontEndPlugin<IStateDB> = {
     commands.addCommand(CommandIDs.loadState, {
       label: trans.__('Load state for the current workspace.'),
       execute: async (args: IRouter.ILocation) => {
+
+        console.info("apputils:load-state with args", args, resolved);
+
         // Since the command can be executed an arbitrary number of times, make
         // sure it is safe to call multiple times.
         if (resolved) {
@@ -436,6 +440,8 @@ const state: JupyterFrontEndPlugin<IStateDB> = {
 
         try {
           const saved = await workspaces.fetch(source);
+
+          console.info("apputils:load-state saved.data", saved.data, typeof(saved.data));
 
           // If this command is called after a reset, the state database
           // will already be resolved.

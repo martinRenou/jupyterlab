@@ -51,6 +51,14 @@ export interface ILayoutRestorer extends IRestorer {
     tracker: WidgetTracker<T>,
     options: IRestorer.IOptions<T>
   ): Promise<any>;
+
+  /**
+   * Generate a layout from JSON.
+   * 
+   * @param layout - The JSON representation of the layout tracked by StateDB.
+   */
+  layoutFromJSON(layout: JSON): ILabShell.ILayout;
+
 }
 
 /**
@@ -292,6 +300,39 @@ export class LayoutRestorer implements ILayoutRestorer {
     dehydrated.top = { ...data.topArea };
 
     return this._connector.save(KEY, dehydrated);
+  }
+
+ layoutFromJSON(layout: JSON): ILabShell.ILayout {
+    const blank: ILabShell.ILayout = {
+      fresh: false,
+      mainArea: null,
+      downArea: null,
+      leftArea: null,
+      rightArea: null,
+      topArea: null,
+      relativeSizes: null
+    };
+
+    if (!layout) {
+      return blank;
+    }
+    const { main, down, left, right, relativeSizes, top } = layout as unknown as Private.ILayout;
+    // If any data exists, then this is not a fresh session. Since this method gets called after
+    // a layout is already loaded from the workspace file, we set fresh to false.
+    const fresh = false;
+    const mainArea = this._rehydrateMainArea(main);
+    const downArea = this._rehydrateDownArea(down);
+    const leftArea = this._rehydrateSideArea(left);
+    const rightArea = this._rehydrateSideArea(right);
+    return {
+      fresh,
+      mainArea,
+      downArea,
+      leftArea,
+      rightArea,
+      relativeSizes: relativeSizes || null,
+      topArea: (top as any) ?? null
+    };
   }
 
   /**

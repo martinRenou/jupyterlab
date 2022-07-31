@@ -10,6 +10,8 @@ import { Awareness } from 'y-protocols/awareness';
 import { WebsocketProvider } from 'y-websocket';
 
 import {
+  ILabShell,
+  ILayoutRestorer,
   JupyterFrontEnd,
   JupyterFrontEndPlugin
 } from '@jupyterlab/application';
@@ -30,7 +32,7 @@ import {
   UserMenu
 } from '@jupyterlab/collaboration';
 import { usersIcon } from '@jupyterlab/ui-components';
-import { AccordionPanel, Menu, MenuBar } from '@lumino/widgets';
+import { AccordionPanel, DockPanel, Menu, MenuBar } from '@lumino/widgets';
 import { URLExt } from '@jupyterlab/coreutils';
 import { ServerConnection } from '@jupyterlab/services';
 import { IStateDB, StateDB } from '@jupyterlab/statedb';
@@ -99,12 +101,13 @@ const menuBarPlugin: JupyterFrontEndPlugin<void> = {
 const rtcGlobalAwarenessPlugin: JupyterFrontEndPlugin<IAwareness> = {
   id: '@jupyterlab/collaboration-extension:rtcGlobalAwareness',
   autoStart: true,
-  requires: [ICurrentUser, IStateDB],
+  requires: [ICurrentUser, IStateDB, ILabShell],
   provides: IGlobalAwareness,
   activate: (
     app: JupyterFrontEnd,
     currentUser: User,
-    state: StateDB
+    state: StateDB,
+    shell: ILabShell
   ): IAwareness => {
     const ydoc = new Y.Doc();
 
@@ -117,7 +120,8 @@ const rtcGlobalAwarenessPlugin: JupyterFrontEndPlugin<IAwareness> = {
     const server = ServerConnection.makeSettings();
     const url = URLExt.join(server.wsUrl, 'api/yjs');
 
-    new WebsocketProvider(url, 'JupyterLab:globalAwareness', ydoc, {
+    //new WebsocketProvider(url, 'JupyterLab:globalAwareness', ydoc, {
+    new WebsocketProvider(url, 'foo:bar:globalAwareness', ydoc, {
       awareness: awareness
     });
 
@@ -143,6 +147,11 @@ const rtcGlobalAwarenessPlugin: JupyterFrontEndPlugin<IAwareness> = {
       } else {
         awareness.setLocalStateField('current', null);
       }
+
+      // set layout and dock panel mode for restoring it
+      awareness.setLocalStateField('layout', data['layout-restorer:data']);
+      awareness.setLocalStateField('dockPanelMode', shell.mode);
+
     });
 
     return awareness;
@@ -155,12 +164,14 @@ const rtcGlobalAwarenessPlugin: JupyterFrontEndPlugin<IAwareness> = {
 const rtcPanelPlugin: JupyterFrontEndPlugin<void> = {
   id: '@jupyterlab/collaboration-extension:rtcPanel',
   autoStart: true,
-  requires: [ICurrentUser, IGlobalAwareness],
+  requires: [ICurrentUser, IGlobalAwareness, ILayoutRestorer, ILabShell],
   provides: IUserPanel,
   activate: (
     app: JupyterFrontEnd,
     currentUser: User,
-    awareness: Awareness
+    awareness: Awareness,
+    restorer: ILayoutRestorer,
+    shell: ILabShell
   ): void => {
     if (PageConfig.getOption('collaborative') !== 'true') {
       return;
@@ -181,10 +192,17 @@ const rtcPanelPlugin: JupyterFrontEndPlugin<void> = {
       app.commands.execute('docmanager:open', { path });
     };
 
+    const layoutRestorer = (layout: JSON, dockPanelMode: DockPanel.Mode) => {
+      const lyt = restorer.layoutFromJSON(layout);
+      console.info("Setting layout to", lyt);
+      shell.restoreLayout(dockPanelMode, lyt);
+    }
+    
     const collaboratorsPanel = new CollaboratorsPanel(
       currentUser,
       awareness,
-      fileopener
+      fileopener,
+      layoutRestorer
     );
     userPanel.addWidget(collaboratorsPanel);
   }

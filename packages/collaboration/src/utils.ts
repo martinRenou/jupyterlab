@@ -3,6 +3,7 @@
 
 import { URLExt } from '@jupyterlab/coreutils';
 import { ServerConnection } from '@jupyterlab/services';
+import { DockPanel } from '@lumino/widgets';
 import { IUser } from './tokens';
 
 /**
@@ -146,4 +147,14 @@ export interface ICollaboratorAwareness {
    * The current file/context the user is working on.
    */
   current?: string;
+  
+  /**
+   * The current workspace layout of the user.
+   */
+  layout: JSON;
+
+  /**
+   * The current dock panel mode for the user's shell.
+   */
+  dockPanelMode: DockPanel.Mode;
 }
