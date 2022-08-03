@@ -35,13 +35,6 @@ export const IUserMenu = new Token<IUserMenu>(
 );
 
 /**
- * The user panel token.
- */
-export const IUserPanel = new Token<AccordionPanel>(
-  '@jupyterlab/collaboration:IUserPanel'
-);
-
-/**
  * The global awareness token.
  */
 export const IGlobalAwareness = new Token<IAwareness>(

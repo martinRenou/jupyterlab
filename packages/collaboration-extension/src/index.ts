@@ -25,19 +25,18 @@ import {
   ICurrentUser,
   IGlobalAwareness,
   IUserMenu,
-  IUserPanel,
   IOpenDocs,
   RendererUserMenu,
-  RTCPanel,
   User,
   UserInfoPanel,
   UserMenu
 } from '@jupyterlab/collaboration';
-import { usersIcon } from '@jupyterlab/ui-components';
-import { AccordionPanel, Menu, MenuBar } from '@lumino/widgets';
+import { SidePanel, usersIcon } from '@jupyterlab/ui-components';
+import { Menu, MenuBar } from '@lumino/widgets';
 import { URLExt } from '@jupyterlab/coreutils';
 import { ServerConnection } from '@jupyterlab/services';
 import { IStateDB, StateDB } from '@jupyterlab/statedb';
+import { ITranslator } from '@jupyterlab/translation';
 import { UUID } from '@lumino/coreutils';
 
 /**
@@ -176,12 +175,12 @@ const rtcGlobalAwarenessPlugin: JupyterFrontEndPlugin<IAwareness> = {
 const rtcPanelPlugin: JupyterFrontEndPlugin<void> = {
   id: '@jupyterlab/collaboration-extension:rtcPanel',
   autoStart: true,
-  requires: [ICurrentUser, IGlobalAwareness, ILayoutRestorer, ILabShell],
-  provides: IUserPanel,
+  requires: [ICurrentUser, IGlobalAwareness, ITranslator, ILayoutRestorer, ILabShell],
   activate: (
     app: JupyterFrontEnd,
     currentUser: User,
     awareness: Awareness,
+    translator: ITranslator,
     restorer: ILayoutRestorer,
     shell: ILabShell
   ): void => {
@@ -189,15 +188,17 @@ const rtcPanelPlugin: JupyterFrontEndPlugin<void> = {
       return;
     }
 
-    const userPanel = new AccordionPanel({
-      renderer: new RTCPanel.Renderer()
-    });
+    const trans = translator.load('jupyterlab');
+
+    const userPanel = new SidePanel();
     userPanel.id = DOMUtils.createDomID();
     userPanel.title.icon = usersIcon;
     userPanel.addClass('jp-RTCPanel');
     app.shell.add(userPanel, 'left', { rank: 300 });
 
     const currentUserPanel = new UserInfoPanel(currentUser);
+    currentUserPanel.title.label = trans.__('User info');
+    currentUserPanel.title.caption = trans.__('User information');
     userPanel.addWidget(currentUserPanel);
 
     const fileopener = (path: string) => {
@@ -238,6 +239,7 @@ const rtcPanelPlugin: JupyterFrontEndPlugin<void> = {
       fileopener,
       layoutRestorer
     );
+    collaboratorsPanel.title.label = trans.__('Online Collaborators');
     userPanel.addWidget(collaboratorsPanel);
   }
 };

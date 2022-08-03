@@ -49,8 +49,6 @@ export class CollaboratorsPanel extends Panel {
 
     this._awareness = awareness;
 
-    this.title.label = 'Online Collaborators';
-
     this._currentUser = currentUser;
     this._layoutRestorer = layoutRestorer;
 

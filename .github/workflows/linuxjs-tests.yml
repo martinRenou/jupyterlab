@@ -35,6 +35,7 @@ jobs:
             js-imageviewer,
             js-inspector,
             js-logconsole,
+            js-lsp,
             js-mainmenu,
             js-nbformat,
             js-notebook,
