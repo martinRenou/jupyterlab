@@ -121,7 +121,7 @@ export class CollaboratorsBody extends ReactWidget {
       let current = '';
       let separator = '';
       let currentFileLocation = '';
-      
+
       if (value.layout && value.layout.current) {
         canOpenCurrent = true;
         currentFileLocation = value.layout.current.split(':')[1];
