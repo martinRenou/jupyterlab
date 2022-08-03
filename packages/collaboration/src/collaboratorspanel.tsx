@@ -52,7 +52,7 @@ export class CollaboratorsPanel extends Panel {
     this._currentUser = currentUser;
     this._layoutRestorer = layoutRestorer;
 
-    this._body = new CollaboratorsBody(fileopener, layoutRestorer);
+    this._body = new CollaboratorsBody(fileopener);
     this.addWidget(this._body);
     this.update();
 
@@ -88,15 +88,11 @@ export class CollaboratorsPanel extends Panel {
 export class CollaboratorsBody extends ReactWidget {
   private _collaborators: ICollaboratorAwareness[] = [];
   private _fileopener: (path: string) => void;
-  private _layoutRestorer: (layout: ICollaboratorLayout) => void;
   private _followingUser: string;
 
-  constructor(
-    fileopener: (path: string) => void, 
-    layoutRestorer: (layout: ICollaboratorLayout) => void) {
+  constructor(fileopener: (path: string) => void) {
     super();
     this._fileopener = fileopener;
-    this._layoutRestorer = layoutRestorer;
     this._followingUser = '';
     this.addClass(COLLABORATORS_LIST_CLASS);
   }
@@ -121,11 +117,6 @@ export class CollaboratorsBody extends ReactWidget {
 
   render(): React.ReactElement<any>[] {
     return this._collaborators.map((value, i) => {
-      let canSetLayout = false;
-      if (value.layout) {
-        canSetLayout = true;
-      }
-
       let canOpenCurrent = false;
       let current = '';
       let separator = '';
@@ -144,9 +135,6 @@ export class CollaboratorsBody extends ReactWidget {
       const onClick = () => {
         if (canOpenCurrent) {
           this._fileopener(currentFileLocation);
-        }
-        if (canSetLayout) {
-          this._layoutRestorer(value.layout);
         }
       };
 

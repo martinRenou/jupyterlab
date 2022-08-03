@@ -1,7 +1,7 @@
 // Copyright (c) Jupyter Development Team.
 // Distributed under the terms of the Modified BSD License.
 
-import { AccordionPanel, Menu } from '@lumino/widgets';
+import { Menu } from '@lumino/widgets';
 import { ISignal } from '@lumino/signaling';
 import { Token } from '@lumino/coreutils';
 import { Awareness } from 'y-protocols/awareness';
