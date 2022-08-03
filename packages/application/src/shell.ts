@@ -1051,8 +1051,6 @@ export class LabShell extends Widget implements JupyterFrontEnd.IShell {
 
     const { mainArea, downArea, leftArea, rightArea, topArea, relativeSizes } =
       layout;
-
-    console.info("---> restoreLayout: mode", mode, "layout", layout, "configuration", configuration);  
     
     // Rehydrate the main area.
     if (mainArea) {

@@ -402,7 +402,6 @@ const state: JupyterFrontEndPlugin<IStateDB> = {
       const id = workspace;
       const metadata = { id };
       const data = await db.toJSON();
-      console.info("apputils: saving state", id, data, metadata);
       await workspaces.save(id, { data, metadata });
     });
 
