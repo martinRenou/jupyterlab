@@ -10,6 +10,8 @@ import { Awareness } from 'y-protocols/awareness';
 import { WebsocketProvider } from 'y-websocket';
 
 import {
+  ILabShell,
+  ILayoutRestorer,
   JupyterFrontEnd,
   JupyterFrontEndPlugin
 } from '@jupyterlab/application';
@@ -19,9 +21,11 @@ import {
   AwarenessMock,
   CollaboratorsPanel,
   IAwareness,
+  ICollaboratorLayout,
   ICurrentUser,
   IGlobalAwareness,
   IUserMenu,
+  IOpenDocs,
   RendererUserMenu,
   User,
   UserInfoPanel,
@@ -33,6 +37,7 @@ import { URLExt } from '@jupyterlab/coreutils';
 import { ServerConnection } from '@jupyterlab/services';
 import { IStateDB, StateDB } from '@jupyterlab/statedb';
 import { ITranslator } from '@jupyterlab/translation';
+import { UUID } from '@lumino/coreutils';
 
 /**
  * Jupyter plugin providing the ICurrentUser.
@@ -98,12 +103,13 @@ const menuBarPlugin: JupyterFrontEndPlugin<void> = {
 const rtcGlobalAwarenessPlugin: JupyterFrontEndPlugin<IAwareness> = {
   id: '@jupyterlab/collaboration-extension:rtcGlobalAwareness',
   autoStart: true,
-  requires: [ICurrentUser, IStateDB],
+  requires: [ICurrentUser, IStateDB, ILabShell],
   provides: IGlobalAwareness,
   activate: (
     app: JupyterFrontEnd,
     currentUser: User,
-    state: StateDB
+    state: StateDB,
+    shell: ILabShell
   ): IAwareness => {
     const ydoc = new Y.Doc();
 
@@ -137,11 +143,26 @@ const rtcGlobalAwarenessPlugin: JupyterFrontEndPlugin<IAwareness> = {
       const data: any = await state.toJSON();
       const current = data['layout-restorer:data']?.main?.current || '';
 
-      if (current.startsWith('editor') || current.startsWith('notebook')) {
-        awareness.setLocalStateField('current', current);
-      } else {
-        awareness.setLocalStateField('current', null);
-      }
+      // gets open widgets in the correct order
+      const widgets = data['layout-restorer:data']?.main?.dock?.widgets || [];
+
+      // get the extra data for each open widget (path, factory, etc)
+      const openDocs: IOpenDocs = {}
+      widgets.map((widget: string) => {
+        if (data[widget]) {
+          openDocs[widget] = data[widget]["data"];
+        }
+      });
+
+      // set everything needed to sync the layout
+      const layout: ICollaboratorLayout = {
+        'current': current,
+        'restorer': data['layout-restorer:data'],
+        'dockPanelMode': shell.mode,
+        'openDocs': openDocs,
+        'uuid': UUID.uuid4().toString(),
+      };
+      awareness.setLocalStateField('layout', layout);
     });
 
     return awareness;
@@ -154,12 +175,14 @@ const rtcGlobalAwarenessPlugin: JupyterFrontEndPlugin<IAwareness> = {
 const rtcPanelPlugin: JupyterFrontEndPlugin<void> = {
   id: '@jupyterlab/collaboration-extension:rtcPanel',
   autoStart: true,
-  requires: [ICurrentUser, IGlobalAwareness, ITranslator],
+  requires: [ICurrentUser, IGlobalAwareness, ITranslator, ILayoutRestorer, ILabShell],
   activate: (
     app: JupyterFrontEnd,
     currentUser: User,
     awareness: Awareness,
-    translator: ITranslator
+    translator: ITranslator,
+    restorer: ILayoutRestorer,
+    shell: ILabShell
   ): void => {
     if (PageConfig.getOption('collaborative') !== 'true') {
       return;
@@ -182,10 +205,39 @@ const rtcPanelPlugin: JupyterFrontEndPlugin<void> = {
       app.commands.execute('docmanager:open', { path });
     };
 
+    var lastLayoutUUID: string = '';
+
+    const layoutRestorer = (collaboratorLayout: ICollaboratorLayout) => {
+
+      // don't load the layout if it's the same as the last one
+      if (lastLayoutUUID !== collaboratorLayout.uuid) {
+
+        // open each document that the collaborator has open
+        Object.entries(collaboratorLayout.openDocs).map(([key, value]) => {
+          // value will be like {path: "Untitled.ipynb", factory: "Notebook"}
+          app.commands.execute('docmanager:open', value);
+        });
+
+        const currentDoc = collaboratorLayout.openDocs[collaboratorLayout.current];
+        if (currentDoc) {
+          // open the current document that the collaborator is on
+          app.commands.execute('docmanager:open', currentDoc);
+
+          // restore the layout now that the same set of documents are open
+          const layout = restorer.layoutFromJSON(collaboratorLayout.restorer);
+          shell.restoreLayout(collaboratorLayout.dockPanelMode, layout);
+
+          // set this so that we don't load the same layout again
+          lastLayoutUUID = collaboratorLayout.uuid;
+        }
+      }
+    }
+    
     const collaboratorsPanel = new CollaboratorsPanel(
       currentUser,
       awareness,
-      fileopener
+      fileopener,
+      layoutRestorer
     );
     collaboratorsPanel.title.label = trans.__('Online Collaborators');
     userPanel.addWidget(collaboratorsPanel);

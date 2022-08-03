@@ -10,7 +10,7 @@ import { Panel } from '@lumino/widgets';
 import { ReactWidget } from '@jupyterlab/apputils';
 
 import { ICurrentUser } from './tokens';
-import { ICollaboratorAwareness } from './utils';
+import { ICollaboratorAwareness, ICollaboratorLayout } from './utils';
 import { PathExt } from '@jupyterlab/coreutils';
 
 /**
@@ -37,17 +37,20 @@ export class CollaboratorsPanel extends Panel {
   private _currentUser: ICurrentUser;
   private _awareness: Awareness;
   private _body: CollaboratorsBody;
+  private _layoutRestorer: (layout: ICollaboratorLayout) => void;
 
   constructor(
     currentUser: ICurrentUser,
     awareness: Awareness,
-    fileopener: (path: string) => void
+    fileopener: (path: string) => void,
+    layoutRestorer: (layout: ICollaboratorLayout) => void
   ) {
     super({});
 
     this._awareness = awareness;
 
     this._currentUser = currentUser;
+    this._layoutRestorer = layoutRestorer;
 
     this._body = new CollaboratorsBody(fileopener);
     this.addWidget(this._body);
@@ -67,6 +70,12 @@ export class CollaboratorsPanel extends Panel {
       if (value.user.name !== this._currentUser.name) {
         collaborators.push(value);
       }
+
+      if (value.layout) {
+        if (value.user.name === this._body.followingUser && this._currentUser.name !== this._body.followingUser) {
+          this._layoutRestorer(value.layout);
+        }
+      }
     });
 
     this._body.collaborators = collaborators;
@@ -79,10 +88,12 @@ export class CollaboratorsPanel extends Panel {
 export class CollaboratorsBody extends ReactWidget {
   private _collaborators: ICollaboratorAwareness[] = [];
   private _fileopener: (path: string) => void;
+  private _followingUser: string;
 
   constructor(fileopener: (path: string) => void) {
     super();
     this._fileopener = fileopener;
+    this._followingUser = '';
     this.addClass(COLLABORATORS_LIST_CLASS);
   }
 
@@ -95,6 +106,15 @@ export class CollaboratorsBody extends ReactWidget {
     this.update();
   }
 
+  get followingUser(): string {
+    return this._followingUser;
+  }
+
+  set followingUser(user: string) {
+    this._followingUser = user;
+    this.update();
+  }
+
   render(): React.ReactElement<any>[] {
     return this._collaborators.map((value, i) => {
       let canOpenCurrent = false;
@@ -102,9 +122,9 @@ export class CollaboratorsBody extends ReactWidget {
       let separator = '';
       let currentFileLocation = '';
 
-      if (value.current) {
+      if (value.layout && value.layout.current) {
         canOpenCurrent = true;
-        currentFileLocation = value.current.split(':')[1];
+        currentFileLocation = value.layout.current.split(':')[1];
 
         current = PathExt.basename(currentFileLocation);
         current =
@@ -118,9 +138,19 @@ export class CollaboratorsBody extends ReactWidget {
         }
       };
 
+      const onFollowClick = () => {
+        this.followingUser = value.user.name;
+      }
+
+      const onUnfollowClick = () => {
+        this.followingUser = "";
+      }
+
       const displayName = `${
         value.user.displayName != '' ? value.user.displayName : value.user.name
       } ${separator} ${current}`;
+
+      const isFollowing = value.user.name === this._followingUser;
 
       return (
         <div
@@ -130,15 +160,17 @@ export class CollaboratorsBody extends ReactWidget {
               : COLLABORATOR_CLASS
           }
           key={i}
-          onClick={onClick}
         >
           <div
             className={COLLABORATOR_ICON_CLASS}
             style={{ backgroundColor: value.user.color }}
+            onClick={onClick}
           >
             <span>{value.user.initials}</span>
           </div>
           <span>{displayName}</span>
+          &nbsp;&nbsp;|&nbsp;&nbsp;
+          {isFollowing ? <div onClick={onUnfollowClick}>Unfollow</div> : <div onClick={onFollowClick}>Follow</div>}
         </div>
       );
     });

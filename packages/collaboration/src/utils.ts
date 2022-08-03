@@ -3,6 +3,8 @@
 
 import { URLExt } from '@jupyterlab/coreutils';
 import { ServerConnection } from '@jupyterlab/services';
+import { ReadonlyPartialJSONObject } from '@lumino/coreutils';
+import { DockPanel } from '@lumino/widgets';
 import { IUser } from './tokens';
 
 /**
@@ -134,6 +136,24 @@ export const getAnonymousUserName = (): string =>
   moonsOfJupyter[Math.floor(Math.random() * moonsOfJupyter.length)];
 
 /**
+ * The representation of a user's open documents.
+ */  
+export interface IOpenDocs {
+  [key: string]: ReadonlyPartialJSONObject;
+}
+
+/**
+ * The representation of a user's workspace layout.
+ */
+export interface ICollaboratorLayout {
+  current: string,
+  restorer: JSON,
+  dockPanelMode: DockPanel.Mode,
+  openDocs: IOpenDocs,
+  uuid: string,
+}
+
+/**
  * Global awareness for JupyterLab scopped shared data.
  */
 export interface ICollaboratorAwareness {
@@ -143,7 +163,7 @@ export interface ICollaboratorAwareness {
   user: IUser.User;
 
   /**
-   * The current file/context the user is working on.
+   * The current workspace layout of the user.
    */
-  current?: string;
+  layout: ICollaboratorLayout;
 }
