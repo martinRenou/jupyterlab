@@ -212,11 +212,6 @@
   user-select: none;
 }
 
-.jp-DirListing-checkboxWrapper {
-  /* Increases hit area of checkbox. */
-  padding: 4px;
-}
-
 .jp-DirListing-header
   .jp-DirListing-checkboxWrapper
   + .jp-DirListing-headerItem {
